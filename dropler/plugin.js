@@ -1,23 +1,6 @@
 CKEDITOR.plugins.add( 'dropler', {
     init: function( editor ) {
         backends = {
-            imgur: {
-                upload: uploadImgur,
-                required: ['clientId'],
-                init: function() {}
-            },
-            s3: {
-                upload: uploadS3,
-                required: [
-                    'bucket', 'accessKeyId','secretAccessKey', 'region'
-                ],
-                init: function() {
-                    var script = document.createElement('script');
-                    script.async = 1;
-                    script.src = 'https://sdk.amazonaws.com/js/aws-sdk-2.1.26.min.js';
-                    document.body.appendChild(script);
-                }
-            },
             basic: {
                 upload: uploadBasic,
                 required: ['uploadUrl'],
@@ -74,29 +57,23 @@ CKEDITOR.plugins.add( 'dropler', {
             editor.insertElement(elem);
         }
 
-        function addHeaders(xhttp, headers) {
-            for (var key in headers) {
-                if (headers.hasOwnProperty(key)) {
-                    xhttp.setRequestHeader(key, headers[key]);
-                }
-            }
-        }
-
-        function post(url, data, headers) {
+        function post(url, data) {
             return new Promise(function(resolve, reject) {
                 var xhttp    = new XMLHttpRequest();
                 xhttp.open('POST', url);
-                addHeaders(xhttp, headers);
+                var formData = new FormData();
+                formData.append("file", data);
                 xhttp.onreadystatechange = function () {
                     if (xhttp.readyState === 4) {
                         if (xhttp.status === 200) {
-                            resolve(JSON.parse(xhttp.responseText).data.link);
+                            console.log(xhttp.responseText);
+                            resolve(JSON.parse(xhttp.responseText).link);
                         } else {
                             reject(JSON.parse(xhttp.responseText));
                         }
                     }
                 };
-                xhttp.send(data);
+                xhttp.send(formData);
             });
         }
 
@@ -104,26 +81,6 @@ CKEDITOR.plugins.add( 'dropler', {
             var settings = editor.config.droplerConfig.settings;
             return post(settings.uploadUrl, file, settings.headers);
         }
-
-        function uploadImgur(file) {
-            var settings = editor.config.droplerConfig.settings;
-            return post('https://api.imgur.com/3/image', file, {'Authorization': settings.clientId});
-        }
-
-        function uploadS3(file) {
-            var settings = editor.config.droplerConfig.settings;
-            AWS.config.update({accessKeyId: settings.accessKeyId, secretAccessKey: settings.secretAccessKey});
-            AWS.config.region = 'us-east-1';
-
-            var bucket = new AWS.S3({params: {Bucket: settings.bucket}});
-            var params = {Key: file.name, ContentType: file.type, Body: file, ACL: "public-read"};
-            return new Promise(function(resolve, reject) {
-                bucket.upload(params, function (err, data) {
-                    if (!err) resolve(data.Location);
-                    else reject(err);
-                });
-            });
-        };
 
         CKEDITOR.on('instanceReady', function() {
             var iframeBase = document.querySelector('iframe').contentDocument.querySelector('html');
