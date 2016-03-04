@@ -1,0 +1,12 @@
+{
+    "repositories":
+            [
+                {
+                    "type": "composer",
+                    "url": "http:\/\/www.phpclasses.org\/"
+                }
+            ],
+    "require": {
+        "phpclasses/php-file-upload": ">=1.0"
+    }    
+}
