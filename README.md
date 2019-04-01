@@ -1,9 +1,9 @@
-#Dropler
+## Dropler
 
-###Fork From:
+### Fork From:
 [https://github.com/chriskiehl/Dropler](https://github.com/chriskiehl/Dropler)
 
-###Changes:
+### Changes:
 
 I just did a change to be uploading with a local file, created by yourself. Here have an example  `ImageUpload-sample.php`
 
@@ -19,7 +19,7 @@ It's like [SimpleUploads](http://ckeditor.com/addon/simpleuploads) but free!
 
 --------
 
-##Install: 
+## Install: 
 
 You can install it anually straight from github. 
 
@@ -27,7 +27,7 @@ Clone or download this respository and then follow the Manual Installation instr
 
 The super short version: Copy the `dropler` folder to the `plugins` directory of ckeditor. 
 
-##Usage Instructions
+## Usage Instructions
 
 First, add the plugin name to ckeditor's `extraPlugins` property inside of `config.js`:
 
